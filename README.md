@@ -12,8 +12,7 @@ Setting up the infra:
 Scripting part:
 1. To simulate log generation at /var/log/app.log, created a cron job to run for every 1 minute using the following script:
   #!/bin/bash
-  # Append a timestamped log entry
-  echo "$(date +'%Y-%m-%d %H:%M:%S') - Sample log entry" >> /var/log/app.log
+  echo "$(date +'%Y-%m-%d %H:%M:%S') - Sample log entry" >> /var/log/app.log #Append a time-stamped log entry
 2. Then, created the upload-to-S3 script.
 3. Modified the ownership of both the above scripts by adding +x (making the scripts executable)
 4. Scheduled both the scripts to run at the proper time intervals in crontab.
