@@ -1,0 +1,26 @@
+#!/bin/bash
+
+# Define variables
+BUCKET_NAME="logs-archival-30march2025"  # Replace with your actual bucket name
+DATE=$(date +%Y-%m-%d)
+LOG_DIR="/var/log"
+LOG_FILE="app.log"
+ARCHIVE_FILE="app-$DATE.tar.gz"
+S3_PATH="logs/$DATE/"
+AUDIT_LOG="/var/log/s3_upload_audit.log"
+
+# Compress the log file
+tar -czf "/tmp/$ARCHIVE_FILE" -C "$LOG_DIR" "$LOG_FILE"
+
+# Upload to S3
+aws s3 cp "/tmp/$ARCHIVE_FILE" "s3://$BUCKET_NAME/$S3_PATH"
+
+# Log the result locally
+if [ $? -eq 0 ]; then
+    echo "$(date +'%Y-%m-%d %H:%M:%S') - Successfully uploaded $ARCHIVE_FILE to s3://$BUCKET_NAME/$S3_PATH" >> $AUDIT_LOG
+else
+    echo "$(date +'%Y-%m-%d %H:%M:%S') - Upload failed for $ARCHIVE_FILE" >> $AUDIT_LOG
+fi
+
+# Remove the local compressed file
+rm -f "/tmp/$ARCHIVE_FILE"
